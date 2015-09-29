@@ -34,9 +34,9 @@ import com.mongodb.DBObject;
  * @version 1.0.0
  *
  */
-public class ExportTaskOfJson implements Runnable {
+public class CopyOfExportTaskOfJson implements Runnable {
 
-	private static final Log logger = LogFactory.getLog(ExportTaskOfJson.class);
+	private static final Log logger = LogFactory.getLog(CopyOfExportTaskOfJson.class);
 
 	private ClientConfig config;
 	private String key;
@@ -45,7 +45,7 @@ public class ExportTaskOfJson implements Runnable {
 	private final String dateSql = "SELECT to_char(MAX(timestamp),'YYYYMMDDHH24mi') THISTIMESTAMP,to_char(MAX(timestamp)-1/36,'YYYYMMDDHH24mi') LASTTIMESTAMP   from sys.dba_audit_trail";
 
 	// 构造方法
-	public ExportTaskOfJson(String key) {
+	public CopyOfExportTaskOfJson(String key) {
 		this.config = ClientConfig.getSingleton();
 		this.key = key;
 

@@ -44,6 +44,7 @@ public class ClientConfig {
 		InputStream in = ClientConfig.class.getClassLoader()
 				.getResourceAsStream(file);
 		try {
+			//将Properties文件的内容加载到properties对象中
 			properties.load(in);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -69,7 +70,7 @@ public class ClientConfig {
 
 	}
 
-	// 根据key获取数据库info
+	// 根据key获取数据库info，传递的key的取值为数组，比如1,2,3
 	public AuthInfo getAuthInfo(String key) {
 		AuthInfo authInfo = new AuthInfo();
 

@@ -20,10 +20,10 @@ import com.cninfo.export.audit.model.ClientConfig;
 import com.cninfo.export.audit.util.FileUtil;
 import com.cninfo.export.audit.util.WriteUtil;
 
-public class ExportTaskOfSymbol implements Runnable {
+public class CopyOfExportTaskOfSymbol implements Runnable {
 
 	private static final Log logger = LogFactory
-			.getLog(ExportTaskOfSymbol.class);
+			.getLog(CopyOfExportTaskOfSymbol.class);
 
 	private ClientConfig config;
 	private String key;
@@ -31,7 +31,7 @@ public class ExportTaskOfSymbol implements Runnable {
 	// 获取时间的sql语句
 	private final String dateSql = "SELECT to_char(MAX(timestamp),'YYYYMMDDHH24mi') THISTIMESTAMP,to_char(MAX(timestamp)-1/36,'YYYYMMDDHH24mi') LASTTIMESTAMP   from sys.dba_audit_trail";
 
-	public ExportTaskOfSymbol(String key) {
+	public CopyOfExportTaskOfSymbol(String key) {
 		this.config = ClientConfig.getSingleton();
 		this.key = key;
 
@@ -130,7 +130,7 @@ public class ExportTaskOfSymbol implements Runnable {
 		} else {
 			LASTTIMESTAMP = lasttime;
 			try {
-				THISTIMESTAMP = getDateAfter(LASTTIMESTAMP, 60);
+				THISTIMESTAMP = getDateAfter(LASTTIMESTAMP, 5);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -172,8 +172,7 @@ public class ExportTaskOfSymbol implements Runnable {
 					+ "comment_text,sessionid,entryid,statementid,\r\n"
 					+ "returncode,priv_used,client_id,econtext_id,session_cpu,\r\n"
 					+ "to_char(extended_timestamp,'YYYY/MM/DD HH24:MI:SS') extended_timestamp,\r\n"
-					+ "proxy_sessionid,global_uid,\r\n"
-					+ "instance_number,os_process,transactionid,SCN,sql_bind,sql_text\r\n"
+					+ "proxy_sessionid,global_uid\r\n"
 					+ "from sys.dba_audit_trail\r\n"
 					+ "where  timestamp >= (to_date('" + LASTTIMESTAMP
 					+ "','YYYYMMDDHH24mi') +" + i
@@ -285,22 +284,19 @@ public class ExportTaskOfSymbol implements Runnable {
 				e.printStackTrace();
 			}
 
-			if (wirteInfo.length() > 0) {
+			// 通过给VM传递参数获取，一般是放程序的当前目录
+			String baseDir = System.getProperty("base.home");
 
-				// 通过给VM传递参数获取，一般是放程序的当前目录
-				String baseDir = System.getProperty("base.home");
+			String writeDir = baseDir + "/oracle_audit/" + hostDir + "/"
+					+ datedir + "/";
 
-				String writeDir = baseDir + "/oracle_audit/" + hostDir + "/"
-						+ datedir + "/";
+			// 创建目录
+			FileUtil.createFile(writeDir);
 
-				// 创建目录
-				FileUtil.createFile(writeDir);
-
-				// 将result的结果写入到文件中
-				WriteUtil.write(writeDir + config.getAuthInfo(key).getSid()
-						+ "_" + LASTTIMESTAMP + "_" + THISTIMESTAMP + ".txt",
-						wirteInfo.toString());
-			}
+			// 将result的结果写入到文件中
+			WriteUtil.write(writeDir + config.getAuthInfo(key).getSid() + "_"
+					+ LASTTIMESTAMP + "_" + THISTIMESTAMP + ".txt",
+					wirteInfo.toString());
 
 			logger.info(hostDir + " " + i + " times write succeed");
 

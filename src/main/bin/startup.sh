@@ -1,5 +1,5 @@
 #!/bin/bash
-timeInterval=2   #MINUTES
+timeInterval=60  #MINUTES
 current_path=`pwd`
 pre=$(dirname $0)
 cd $pre

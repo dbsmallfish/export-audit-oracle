@@ -22,6 +22,7 @@ public class Client {
 
 		if (keySet != null) {
 			logger.info("get kyes " + keySet.toString() + " succeed ...");
+
 		}
 
 		// 遍历key集合，为每个key生成一个独立的线程去运行ExportTaskOfJson任务
@@ -31,11 +32,18 @@ public class Client {
 			ScheduledExecutorService exportService = Executors
 					.newSingleThreadScheduledExecutor();
 
-			exportService.scheduleAtFixedRate(new ExportTaskOfJson(key), 0,
+			exportService.scheduleWithFixedDelay(new ExportTaskOfSymbol(key), 0,
 					Integer.parseInt(System.getProperty("timeInterval")),
 					TimeUnit.MINUTES);
 
 		}
+
+		// ScheduledExecutorService exportService = Executors
+		// .newSingleThreadScheduledExecutor();
+		//
+		// exportService.scheduleAtFixedRate(new ExportTaskOfJson("2"), 0,
+		// Integer.parseInt(System.getProperty("timeInterval")),
+		// TimeUnit.MINUTES);
 
 	}
 
